@@ -4,7 +4,9 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
-    "pg": "^8.6.0"
+    "pg": "^8.6.0",
+    "swagger-jsdoc": "^6.1.0",
+    "swagger-ui-express": "^4.1.6"
   },
   "name": "node_app",
   "version": "1.0.0",
