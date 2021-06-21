@@ -26,4 +26,19 @@ customerApp.post("/add_cart/:id", checkLoggedIn, (req, res) => {
   );
 });
 
+customerApp.get("/user_cart", checkLoggedIn, (req, res) => {
+  const customer_id = res.user_id;
+  client.query(
+    "select p.name , p.des , p.id , p.price, p.category from product p left join cart c on p.id = c.product_id left join customer cr on c.customer_id =  cr.c_id where cr.c_id = $1",
+    [customer_id],
+    (err, data) => {
+      if (err) {
+        res.sendStatus(401);
+      } else {
+        res.send(data.rows);
+      }
+    }
+  );
+});
+
 module.exports = customerApp;
