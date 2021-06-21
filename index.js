@@ -8,7 +8,7 @@ const app = express();
 const bodyParser = require("body-parser"),
   swaggerJsdoc = require("swagger-jsdoc"),
   swaggerUi = require("swagger-ui-express");
-
+const sellerApp = require("./seller/seller.js");
 const options = {
   definition: {
     openapi: "3.0.0",
@@ -24,6 +24,7 @@ const specs = swaggerJsdoc(options);
 app.use(express.json());
 app.use("/products", productApp);
 app.use("/customer", customerApp);
+app.use("/seller", sellerApp);
 app.use("/auth", userApp);
 app.get("/", (req, res) => {
   res.send("home page  visit /docs for the docs of the api");

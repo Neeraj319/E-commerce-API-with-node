@@ -29,7 +29,7 @@ customerApp.post("/add_cart/:id", checkLoggedIn, (req, res) => {
 customerApp.get("/user_cart", checkLoggedIn, (req, res) => {
   const customer_id = res.user_id;
   client.query(
-    "select p.name , p.des , p.id , p.price, p.category , c.id as product_cart_id from product p left join cart c on p.id = c.product_id left join customer cr on c.customer_id =  cr.c_id where cr.c_id = $1",
+    "select p.name , p.des , p.id as product_id , p.price, p.category , c.id as product_cart_id from product p left join cart c on p.id = c.product_id left join customer cr on c.customer_id =  cr.c_id where cr.c_id = $1",
     [customer_id],
     (err, data) => {
       if (err) {
@@ -68,6 +68,25 @@ customerApp.delete("/delete_cart/:id", checkLoggedIn, (req, res) => {
             );
           }
         }
+      }
+    }
+  );
+});
+
+customerApp.post("/order_product/:id", checkLoggedIn, (req, res) => {
+  const { id } = req.params;
+  const customer_id = res.user_id;
+  client.query(
+    `insert into order_product (customer_id , product_id , delivery_date) values ($1 , $2 , now()::DATE + INTERVAL '4 days')`,
+    [customer_id, id],
+    (err, data) => {
+      if (err) {
+        res.setStatus = 404;
+        res.send({
+          message: err.detail,
+        });
+      } else {
+        res.sendStatus(201);
       }
     }
   );
