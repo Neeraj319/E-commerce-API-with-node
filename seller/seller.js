@@ -10,7 +10,7 @@ sellerApp.use((req, res, next) => {
 
 sellerApp.get("/ordered_products", checkOwner, (req, res) => {
   client.query(
-    "select p.id as product_id , p.name , o.id as order_id , o.delivery_date from order_product o left join product p on p.id = o.product_id where o.product_delivered = false  order by o.delivery_date",
+    "select p.id as product_id , p.name , o.id as order_id ,p.product_img , o.delivery_date from order_product o left join product p on p.id = o.product_id where o.product_delivered = false  order by o.delivery_date",
     (err, data) => {
       console.log("here");
       res.setStatus = 200;
@@ -71,7 +71,7 @@ sellerApp.patch("/update_order_status/:id", checkOwner, (req, res) => {
 sellerApp.get("/order_info/:id", checkOwner, (req, res) => {
   const { id } = req.params;
   client.query(
-    "select o.id as order_id , p.id as product_id ,o.customer_id ,p.name , p.des , o.delivery_date , o.product_packed , o.product_shipped , o.product_delivered from order_product o left join product p on p.id = o.product_id where o.id = $1",
+    "select o.id as order_id , p.id as product_id ,o.customer_id ,p.name ,p.product_img , p.des , o.delivery_date , o.product_packed , o.product_shipped , o.product_delivered from order_product o left join product p on p.id = o.product_id where o.id = $1",
     [id],
     (err, data) => {
       if (err) {

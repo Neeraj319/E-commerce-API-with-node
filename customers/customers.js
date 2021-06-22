@@ -29,7 +29,7 @@ customerApp.post("/add_cart/:id", checkLoggedIn, (req, res) => {
 customerApp.get("/user_cart", checkLoggedIn, (req, res) => {
   const customer_id = res.user_id;
   client.query(
-    "select p.name , p.des , p.id as product_id , p.price, p.category , c.id as product_cart_id from product p left join cart c on p.id = c.product_id left join customer cr on c.customer_id =  cr.c_id where cr.c_id = $1",
+    "select p.name , p.des , p.id as product_id, p.product_img , p.price, p.category , c.id as product_cart_id from product p left join cart c on p.id = c.product_id left join customer cr on c.customer_id =  cr.c_id where cr.c_id = $1",
     [customer_id],
     (err, data) => {
       if (err) {
@@ -96,7 +96,7 @@ customerApp.get("/user_orders", checkLoggedIn, (req, res) => {
   const user_id = res.user_id;
   const { id } = req.params;
   client.query(
-    "SELECT o.id as order_id , p.id as product_id ,p.name , p.price , o.delivery_date from order_product o left join product p on p.id = o.product_id where o.customer_id = $1 order by o.delivery_date",
+    "SELECT o.id as order_id , p.id as product_id ,p.name ,p.product_img , p.price , o.delivery_date from order_product o left join product p on p.id = o.product_id where o.customer_id = $1 order by o.delivery_date",
     [user_id],
     (err, data) => {
       if (err) {
@@ -115,7 +115,7 @@ customerApp.get("/user_order_info/:id", checkLoggedIn, (req, res) => {
   const { id } = req.params;
   console.log(id, user_id);
   client.query(
-    `select o.id as order_id , p.id as product_id ,o.customer_id ,p.name , p.des , o.delivery_date , o.product_packed , o.product_shipped , o.product_delivered from order_product o left join product p on p.id = o.product_id where o.id = $1`,
+    `select o.id as order_id , p.id as product_id ,o.customer_id ,p.product_img ,p.name , p.des , o.delivery_date , o.product_packed , o.product_shipped , o.product_delivered from order_product o left join product p on p.id = o.product_id where o.id = $1`,
     [id],
     (err, data) => {
       if (err) {

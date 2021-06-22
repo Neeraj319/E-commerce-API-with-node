@@ -6,6 +6,7 @@ const fileUpload = require("express-fileupload");
 const { userApp } = require("./users/users.js");
 const customerApp = require("./customers/customers.js");
 const app = express();
+const path = require("path");
 const bodyParser = require("body-parser"),
   swaggerJsdoc = require("swagger-jsdoc"),
   swaggerUi = require("swagger-ui-express");
@@ -28,6 +29,8 @@ app.use(
     createParentPath: false,
   })
 );
+app.use(express.static("media"));
+app.use("/media", express.static(path.join(__dirname, "media/product_images")));
 app.use("/products", productApp);
 app.use("/customer", customerApp);
 app.use("/seller", sellerApp);

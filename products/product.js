@@ -2,8 +2,6 @@ const express = require("express");
 const productApp = express.Router();
 const client = require("../models");
 const { checkOwner } = require("../users/users.js");
-const path = require("path");
-const e = require("express");
 
 productApp.use((req, res, next) => {
   console.log("products app called");
@@ -107,7 +105,7 @@ productApp.get("/search", (req, res) => {
   );
 });
 
-productApp.post("/upload/:id", checkOwner, async (req, res) => {
+productApp.post("/upload_image/:id", checkOwner, async (req, res) => {
   const { id } = req.params;
   if (!req.files) {
     req.sendStatus(406);
@@ -135,7 +133,7 @@ productApp.post("/upload/:id", checkOwner, async (req, res) => {
           } else {
             client.query(
               "UPDATE product set product_img = $1",
-              [new_name],
+              ["media/product_images/" + new_name],
               (req, data) => {
                 if (err) {
                   console.log(err);
