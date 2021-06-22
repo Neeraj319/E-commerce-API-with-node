@@ -73,7 +73,6 @@ productApp.delete("/delete_product/:id", checkOwner, (req, res) => {
 
 productApp.patch("/update_product/:id", checkOwner, (req, res) => {
   const { id } = req.params;
-  const columns = ["name", "des", "price"];
   for (let i in req.body) {
     client.query(
       `UPDATE product set ${i} = $1 where id = $2`,

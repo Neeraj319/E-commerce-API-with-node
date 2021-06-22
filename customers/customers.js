@@ -92,4 +92,22 @@ customerApp.post("/order_product/:id", checkLoggedIn, (req, res) => {
   );
 });
 
+customerApp.get("/user_orders", checkLoggedIn, (req, res) => {
+  const user_id = res.user_id;
+  console.log(user_id);
+  client.query(
+    "SELECT o.id , p.name , p.price , o.delivery_date from order_product o left join product p on p.id = o.product_id where o.customer_id = $1 order by o.delivery_date",
+    [user_id],
+    (err, data) => {
+      if (err) {
+        console.log(err);
+        res.sendStatus(500);
+      } else {
+        res.setStatus = 200;
+        res.send(data.rows);
+      }
+    }
+  );
+});
+
 module.exports = customerApp;
