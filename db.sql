@@ -26,7 +26,8 @@ CREATE TABLE product(
     name VARCHAR(50) NOT NULL,
     des TEXT NOT NULL,
     price float NOT NULL,
-    category VARCHAR(50) NOT NULL
+    category VARCHAR(50) NOT NULL,
+    product_img VARCHAR(300)
 );
 
 CREATE TABLE cart (

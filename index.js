@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const productApp = require("./products/product.js");
 const express = require("express");
+const fileUpload = require("express-fileupload");
 const { userApp } = require("./users/users.js");
 const customerApp = require("./customers/customers.js");
 const app = express();
@@ -22,6 +23,11 @@ const options = {
 };
 const specs = swaggerJsdoc(options);
 app.use(express.json());
+app.use(
+  fileUpload({
+    createParentPath: false,
+  })
+);
 app.use("/products", productApp);
 app.use("/customer", customerApp);
 app.use("/seller", sellerApp);

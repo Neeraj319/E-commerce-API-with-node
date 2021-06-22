@@ -2,6 +2,9 @@ const express = require("express");
 const productApp = express.Router();
 const client = require("../models");
 const { checkOwner } = require("../users/users.js");
+const path = require("path");
+const e = require("express");
+
 productApp.use((req, res, next) => {
   console.log("products app called");
   next();
@@ -102,6 +105,52 @@ productApp.get("/search", (req, res) => {
       }
     }
   );
+});
+
+productApp.post("/upload/:id", checkOwner, async (req, res) => {
+  const { id } = req.params;
+  if (!req.files) {
+    req.sendStatus(406);
+  } else {
+    let image = req.files.image;
+    let new_name = "";
+    const name = image.name.split(" ");
+    for (let i of name) {
+      if (i === " ") {
+      } else {
+        new_name += i;
+      }
+    }
+    let uploadPath = process.cwd() + "/media/product_images/" + new_name;
+    client.query(
+      "select id from product where id = $1",
+      [id],
+      (err, data_one) => {
+        if (err) {
+          console.log(err);
+          res.sendStatus(500);
+        } else {
+          if (data_one.rowCount === 0) {
+            res.sendStatus(404);
+          } else {
+            client.query(
+              "UPDATE product set product_img = $1",
+              [new_name],
+              (req, data) => {
+                if (err) {
+                  console.log(err);
+                  res.sendStatus(500);
+                } else {
+                  image.mv(uploadPath);
+                  res.sendStatus(201);
+                }
+              }
+            );
+          }
+        }
+      }
+    );
+  }
 });
 
 module.exports = productApp;
