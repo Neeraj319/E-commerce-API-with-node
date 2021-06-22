@@ -94,9 +94,9 @@ customerApp.post("/order_product/:id", checkLoggedIn, (req, res) => {
 
 customerApp.get("/user_orders", checkLoggedIn, (req, res) => {
   const user_id = res.user_id;
-  console.log(user_id);
+  const { id } = req.params;
   client.query(
-    "SELECT o.id , p.name , p.price , o.delivery_date from order_product o left join product p on p.id = o.product_id where o.customer_id = $1 order by o.delivery_date",
+    "SELECT o.id as order_id , p.id as product_id ,p.name , p.price , o.delivery_date from order_product o left join product p on p.id = o.product_id where o.customer_id = $1 order by o.delivery_date",
     [user_id],
     (err, data) => {
       if (err) {
@@ -105,6 +105,32 @@ customerApp.get("/user_orders", checkLoggedIn, (req, res) => {
       } else {
         res.setStatus = 200;
         res.send(data.rows);
+      }
+    }
+  );
+});
+
+customerApp.get("/user_order_info/:id", checkLoggedIn, (req, res) => {
+  const user_id = res.user_id;
+  const { id } = req.params;
+  console.log(id, user_id);
+  client.query(
+    `select o.id as order_id , p.id as product_id ,o.customer_id ,p.name , p.des , o.delivery_date , o.product_packed , o.product_shipped , o.product_delivered from order_product o left join product p on p.id = o.product_id where o.id = $1`,
+    [id],
+    (err, data) => {
+      if (err) {
+        console.log(err);
+        res.sendStatus(500);
+      } else {
+        if (data.rowCount !== 0) {
+          if (data.rows[0].customer_id === user_id) {
+            res.send(data.rows);
+          } else {
+            res.sendStatus(401);
+          }
+        } else {
+          res.sendStatus(404);
+        }
       }
     }
   );

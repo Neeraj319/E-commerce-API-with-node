@@ -161,7 +161,6 @@ function checkLoggedIn(req, res, next) {
     // res.sendStatus(200);
     get_current_user(token)
       .then((data) => {
-        console.log(data.details.c_id);
         res.user_id = data.details.c_id;
         next();
       })

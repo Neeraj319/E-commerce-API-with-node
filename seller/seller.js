@@ -69,4 +69,24 @@ sellerApp.patch("/update_order_status/:id", checkOwner, (req, res) => {
   }
 });
 
+sellerApp.get("/order_info/:id", checkOwner, (req, res) => {
+  const { id } = req.params;
+  client.query(
+    "select o.id as order_id , p.id as product_id ,o.customer_id ,p.name , p.des , o.delivery_date , o.product_packed , o.product_shipped , o.product_delivered from order_product o left join product p on p.id = o.product_id where o.id = $1",
+    [id],
+    (err, data) => {
+      if (err) {
+        console.log(err);
+        res.setStatus(500);
+      } else {
+        if (data.rowCount === 0) {
+          res.sendStatus(404);
+        } else {
+          res.send(data.rows[0]);
+        }
+      }
+    }
+  );
+});
+
 module.exports = sellerApp;
