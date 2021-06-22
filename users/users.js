@@ -84,7 +84,7 @@ function createAccessToken(username, password) {
   return new Promise((resolve, reject) => {
     getUser(username, password).then((data) => {
       client.query(
-        `select c.c_id , p.p_id , p.username , s.s_id from person p left join customer c on p.p_id = c.person_id left join seller s on s.person_id = p.p_id where p.username = $1 ;`,
+        `select c.c_id , p.p_id , p.username , p.email, s.s_id from person p left join customer c on p.p_id = c.person_id left join seller s on s.person_id = p.p_id where p.username = $1 ;`,
         [username],
         (err, res) => {
           if (err) {
@@ -162,6 +162,7 @@ function checkLoggedIn(req, res, next) {
     get_current_user(token)
       .then((data) => {
         res.user_id = data.details.c_id;
+        res.user_email = data.details.email;
         next();
       })
       .catch((err) => {

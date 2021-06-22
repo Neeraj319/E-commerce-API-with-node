@@ -36,7 +36,6 @@ productApp.post("/add_product", checkOwner, (req, res) => {
         res.statusCode = 500;
         res.send({ message: err.detail });
       } else {
-        console.log(response.rows);
         res.statusCode = 201;
         res.send(req.body);
       }
@@ -149,6 +148,21 @@ productApp.post("/upload_image/:id", checkOwner, async (req, res) => {
       }
     );
   }
+});
+
+productApp.get("/similar_products", (req, res) => {
+  const { category } = req.query;
+  client.query(
+    `SELECT * from product where category like ('%${category}%')`,
+    (err, data) => {
+      if (err) {
+        console.log(err);
+        res.sendStatus(500);
+      } else {
+        res.send(data.rows);
+      }
+    }
+  );
 });
 
 module.exports = productApp;
