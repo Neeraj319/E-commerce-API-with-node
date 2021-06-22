@@ -1,5 +1,3 @@
-const { compare } = require("bcrypt");
-const e = require("express");
 const express = require("express");
 const sellerApp = express.Router();
 const client = require("../models");

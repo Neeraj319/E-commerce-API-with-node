@@ -91,4 +91,18 @@ productApp.patch("/update_product/:id", checkOwner, (req, res) => {
   }
 });
 
+productApp.get("/search", (req, res) => {
+  const { query: search_query } = req.query;
+  client.query(
+    `select * from product where name ilike ('%${search_query}%') or category ilike ('%${search_query}%')`,
+    (err, data) => {
+      if (err) {
+        res.sendStatus(500);
+      } else {
+        res.send(data.rows);
+      }
+    }
+  );
+});
+
 module.exports = productApp;
