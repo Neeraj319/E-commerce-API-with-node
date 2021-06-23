@@ -67,12 +67,16 @@ function getUser(username, password) {
         if (err) {
           reject(null);
         } else {
-          const { password: hashPassword } = data.rows[0];
-          const verify = verifyPassword(hashPassword, password);
-          if (verify) {
-            resolve(verify);
-          } else {
-            reject("password did not matched");
+          try {
+            const { password: hashPassword } = data.rows[0];
+            const verify = verifyPassword(hashPassword, password);
+            if (verify) {
+              resolve(verify);
+            } else {
+              reject("password did not matched");
+            }
+          } catch {
+            reject(null);
           }
         }
       }
@@ -82,25 +86,27 @@ function getUser(username, password) {
 
 function createAccessToken(username, password) {
   return new Promise((resolve, reject) => {
-    getUser(username, password).then((data) => {
-      client.query(
-        `select c.c_id , p.p_id , p.username , p.email, s.s_id from person p left join customer c on p.p_id = c.person_id left join seller s on s.person_id = p.p_id where p.username = $1 ;`,
-        [username],
-        (err, res) => {
-          if (err) {
-            reject("something went wrong");
-          } else {
-            const token = jwt.sign(
-              {
-                details: res.rows[0],
-              },
-              process.env.SECRET_KEY
-            );
-            resolve({ token: token });
+    getUser(username, password)
+      .then((data) => {
+        client.query(
+          `select c.c_id , p.p_id , p.username , p.email, s.s_id from person p left join customer c on p.p_id = c.person_id left join seller s on s.person_id = p.p_id where p.username = $1 ;`,
+          [username],
+          (err, res) => {
+            if (err) {
+              reject("something went wrong");
+            } else {
+              const token = jwt.sign(
+                {
+                  details: res.rows[0],
+                },
+                process.env.SECRET_KEY
+              );
+              resolve({ token: token });
+            }
           }
-        }
-      );
-    });
+        );
+      })
+      .catch((err) => reject(null));
   });
 }
 userApp.post("/login", (req, res) => {
