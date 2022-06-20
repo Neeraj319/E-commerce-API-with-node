@@ -10,7 +10,10 @@ const path = require("path");
 const bodyParser = require("body-parser"),
   swaggerJsdoc = require("swagger-jsdoc"),
   swaggerUi = require("swagger-ui-express");
+
 const sellerApp = require("./seller/seller.js");
+
+
 const options = {
   definition: {
     openapi: "3.0.0",
@@ -22,6 +25,8 @@ const options = {
   },
   apis: ["./routes/books.js"],
 };
+
+
 const specs = swaggerJsdoc(options);
 app.use(express.json());
 app.use(
@@ -39,4 +44,5 @@ app.get("/", (req, res) => {
   res.send("home page  visit /docs for the docs of the api");
 });
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(specs, { explorer: true }));
-app.listen(5000, () => console.log("server started"));
+
+app.listen(8000, '0.0.0.0', () => console.log("server started"));
